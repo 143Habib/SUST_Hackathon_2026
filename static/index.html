@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QueueStorm Investigator · Digital Finance SupportOps API</title>
+  <meta name="description" content="Professional UI for the QueueStorm Investigator fintech support investigation API." />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell nav">
+      <a class="logo" href="#top" aria-label="QueueStorm Investigator home">
+        <span class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 6.5C4 5.12 5.12 4 6.5 4h11C18.88 4 20 5.12 20 6.5v7c0 1.38-1.12 2.5-2.5 2.5H13l-4.8 3.2c-.83.55-1.95-.04-1.95-1.04V16H6.5A2.5 2.5 0 0 1 4 13.5v-7Z" stroke="white" stroke-width="1.8"/>
+            <path d="M8 8h8M8 11h5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="logo-text">
+          <span>QueueStorm Investigator</span>
+          <small>Fintech SupportOps Copilot</small>
+        </span>
+      </a>
+      <nav class="navlinks" aria-label="Main navigation">
+        <a href="#analyzer">Analyzer</a>
+        <a href="#flow">Workflow</a>
+        <a href="/docs">API Docs</a>
+        <a href="#deploy">Deploy</a>
+      </nav>
+      <div id="healthPill" class="status-pill"><i id="healthDot" class="dot warn"></i><span>Checking API...</span></div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="shell hero-grid">
+        <div>
+          <div class="kicker">⚡ Real-time complaint investigation API</div>
+          <h1><span class="gradient-text">Investigate tickets before the queue explodes.</span></h1>
+          <p class="lead">
+            A production-style internal copilot for digital finance support teams. It reads a customer complaint,
+            compares recent transaction evidence, selects the relevant transaction, routes the case, escalates risk,
+            and drafts a safe official reply without asking for PIN, OTP, password, or unauthorized refund confirmation.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#analyzer">Launch Analyzer</a>
+            <a class="btn" href="/docs" target="_blank" rel="noreferrer">Open Swagger Docs</a>
+            <a class="btn" href="/health" target="_blank" rel="noreferrer">Health Check</a>
+          </div>
+          <div class="badges">
+            <span class="badge ok">Schema-safe</span>
+            <span class="badge ok">Rule-based core</span>
+            <span class="badge warn">Human escalation</span>
+            <span class="badge danger">Credential guardrails</span>
+          </div>
+        </div>
+        <aside class="hero-card" aria-label="API response preview">
+          <div class="terminal">
+            <div class="terminal-head">
+              <div class="lights"><i></i><i></i><i></i></div>
+              <div class="terminal-title">POST /analyze-ticket</div>
+            </div>
+            <div class="terminal-body">
+              <div class="code-line">{</div>
+              <div class="code-line">  <span class="key">"evidence_verdict"</span>: <span class="str">"consistent"</span>,</div>
+              <div class="code-line">  <span class="key">"case_type"</span>: <span class="str">"wrong_transfer"</span>,</div>
+              <div class="code-line">  <span class="key">"department"</span>: <span class="str">"dispute_resolution"</span>,</div>
+              <div class="code-line">  <span class="key">"human_review_required"</span>: true,</div>
+              <div class="code-line">  <span class="key">"confidence"</span>: <span class="num">0.9</span>,</div>
+              <div class="code-line">  <span class="key">"reason_codes"</span>: [<span class="str">"amount_matched"</span>, <span class="str">"transaction_match"</span>]</div>
+              <div class="code-line">}</div>
+              <div class="risk-strip">
+                <div class="risk-box"><b id="totalProcessed">0</b><span>Total processed</span></div>
+                <div class="risk-box"><b id="highRisk">0</b><span>High / critical</span></div>
+                <div class="risk-box"><b id="avgLatency">0 ms</b><span>Average latency</span></div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell">
+        <div class="card-grid">
+          <div class="card metric">
+            <div class="metric-label">Last Verdict</div>
+            <div id="lastVerdict" class="metric-value">—</div>
+            <div class="metric-note">consistent / inconsistent / insufficient_data</div>
+          </div>
+          <div class="card metric">
+            <div class="metric-label">Last Route</div>
+            <div id="lastRoute" class="metric-value">—</div>
+            <div class="metric-note">department selected by rules engine</div>
+          </div>
+          <div class="card metric">
+            <div class="metric-label">Severity</div>
+            <div id="lastSeverity" class="metric-value">—</div>
+            <div class="metric-note">low / medium / high / critical</div>
+          </div>
+          <div class="card metric">
+            <div class="metric-label">Fraud Signals</div>
+            <div id="fraudCount" class="metric-value">0</div>
+            <div class="metric-note">phishing or social engineering cases</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="analyzer" class="section">
+      <div class="shell">
+        <div class="section-head">
+          <div>
+            <h2>Live Ticket Analyzer</h2>
+            <p class="sub">Paste any valid competition request JSON. This UI calls the exact same <code>POST /analyze-ticket</code> endpoint used by the judge.</p>
+          </div>
+          <div class="hero-actions">
+            <button id="loadWrong" class="btn small" type="button">Wrong Transfer</button>
+            <button id="loadFraud" class="btn small" type="button">Fraud</button>
+            <button id="loadDup" class="btn small" type="button">Duplicate</button>
+            <button id="loadBanglish" class="btn small" type="button">Banglish</button>
+          </div>
+        </div>
+        <div class="workbench">
+          <div class="card">
+            <div class="panel-title">
+              <h3>Request Body</h3>
+              <span>JSON input</span>
+            </div>
+            <textarea id="payload" spellcheck="false"></textarea>
+            <div class="hero-actions">
+              <button id="analyzeBtn" class="btn green" type="button">Run Investigation</button>
+              <button id="clearBtn" class="btn" type="button">Clear Output</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="panel-title">
+              <h3>Investigation Report</h3>
+              <span id="lastLatency">—</span>
+            </div>
+            <div id="output" class="output">
+              <div class="output-empty">
+                <div>
+                  <b>No analysis yet.</b><br />
+                  <span>Run an investigation to view a human-readable report. Raw JSON stays available under Developer View.</span>
+                </div>
+              </div>
+            </div>
+            <div class="hero-actions">
+              <button id="copyBtn" class="btn" type="button">Copy Response</button>
+              <a class="btn" href="/docs" target="_blank" rel="noreferrer">Try in Swagger</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="flow" class="section">
+      <div class="shell">
+        <div class="section-head">
+          <div>
+            <h2>Investigation Workflow</h2>
+            <p class="sub">The engine is deterministic for speed, repeatability, safety, and hidden-test stability. It does not need an external LLM for core decisions.</p>
+          </div>
+        </div>
+        <div class="flow">
+          <div class="card flow-step"><div class="icon">1</div><h3>Normalize</h3><p>Handles English, Bangla, Banglish, Bangla digits, amounts, transaction IDs, phone numbers, and time clues.</p></div>
+          <div class="card flow-step"><div class="icon">2</div><h3>Classify</h3><p>Maps the complaint to the exact allowed case taxonomy without enum drift.</p></div>
+          <div class="card flow-step"><div class="icon">3</div><h3>Match Evidence</h3><p>Scores transaction history by amount, type, status, counterparty, timestamp, and explicit transaction ID.</p></div>
+          <div class="card flow-step"><div class="icon">4</div><h3>Route & Escalate</h3><p>Selects severity, department, and human-review flag for disputes, high value, suspicious, or ambiguous cases.</p></div>
+          <div class="card flow-step"><div class="icon">5</div><h3>Safe Reply</h3><p>Uses guarded templates that never request PIN/OTP/password and never promise unauthorized refunds or reversals.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="deploy" class="section">
+      <div class="shell">
+        <div class="section-head">
+          <div>
+            <h2>Ready for Judges</h2>
+            <p class="sub">The API contract remains unchanged. The UI is a professional layer on top of the same endpoints.</p>
+          </div>
+        </div>
+        <div class="deploy-grid">
+          <div class="card">
+            <h3>Local Run</h3>
+            <div class="command">py -m pip install -r requirements.txt<br />py main.py</div>
+            <p class="sub">Open <b>http://localhost:8000</b>, <b>/health</b>, or <b>/docs</b>.</p>
+          </div>
+          <div class="card">
+            <h3>Production Start Command</h3>
+            <div class="command">uvicorn main:app --host 0.0.0.0 --port $PORT</div>
+            <p class="sub">Deploy on Render/Railway/Fly/EC2 and submit the public HTTPS base URL.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="shell">QueueStorm Investigator · Built for safe, reliable, evidence-first digital finance support operations.</div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
